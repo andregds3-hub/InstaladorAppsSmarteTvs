@@ -4,9 +4,10 @@ __pycache__/
 *.pyc
 .pytest_cache/
 
-# Segredos e dados locais
+# Segredos e dados locais (só as pastas de dados do painel, não pacotes "data" do código)
 .env
-data/
+/data/
+panel/data/
 *.p12
 *.pem
 perfil*/

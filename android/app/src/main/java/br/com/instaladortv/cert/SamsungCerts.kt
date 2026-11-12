@@ -14,6 +14,7 @@ import org.bouncycastle.asn1.x509.ExtensionsGenerator
 import org.bouncycastle.asn1.x509.GeneralName
 import org.bouncycastle.asn1.x509.GeneralNames
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder
+import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder
 import org.bouncycastle.util.encoders.Base64
 import org.json.JSONObject
@@ -49,7 +50,7 @@ object CsrFactory {
         return pem(builder, keys)
     }
 
-    private fun pem(builder: JcaPKCS10CertificationRequestBuilder, keys: KeyPair): String {
+    private fun pem(builder: PKCS10CertificationRequestBuilder, keys: KeyPair): String {
         val csr = builder.build(JcaContentSignerBuilder("SHA256withRSA").build(keys.private))
         val body = Base64.toBase64String(csr.encoded).chunked(64).joinToString("\n")
         return "-----BEGIN CERTIFICATE REQUEST-----\n$body\n-----END CERTIFICATE REQUEST-----\n"

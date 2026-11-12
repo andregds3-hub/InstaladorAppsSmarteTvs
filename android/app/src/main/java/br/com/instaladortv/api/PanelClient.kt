@@ -16,7 +16,7 @@ import java.io.IOException
 import java.security.MessageDigest
 
 class PanelException(message: String, val status: Int? = null) : Exception(message) {
-    val needsAccessCode: Boolean get() = status == 401 && "código" in message.lowercase()
+    val needsAccessCode: Boolean get() = status == 401 && "código" in message.orEmpty().lowercase()
 }
 
 data class PanelApp(
