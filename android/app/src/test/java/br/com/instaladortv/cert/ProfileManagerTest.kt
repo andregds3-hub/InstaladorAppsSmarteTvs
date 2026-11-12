@@ -51,7 +51,7 @@ class ProfileManagerTest {
     @Test fun `same tv again needs no login`() = runTest {
         manager().ensure("DUIDTV0001", login)
         assertNotNull(manager().readyFor("DUIDTV0001"))
-        manager().ensure("DUIDTV0001") { fail("não devia pedir login"); throw IllegalStateException() }
+        manager().ensure("DUIDTV0001", login = { fail("não devia pedir login"); throw IllegalStateException() })
         assertEquals(1, logins)
     }
 

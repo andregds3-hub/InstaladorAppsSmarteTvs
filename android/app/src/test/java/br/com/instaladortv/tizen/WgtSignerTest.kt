@@ -12,9 +12,14 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.w3c.dom.Element
+import org.apache.xml.security.Init
+import org.apache.xml.security.signature.XMLSignature
+import org.apache.xml.security.signature.XMLSignatureInput
+import org.apache.xml.security.utils.resolver.ResourceResolverContext
+import org.apache.xml.security.utils.resolver.ResourceResolverSpi
 import java.io.ByteArrayInputStream
 import java.math.BigInteger
-import java.security.Key
+import java.net.URLDecoder
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.cert.X509Certificate
@@ -22,16 +27,6 @@ import java.util.Date
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
-import javax.xml.crypto.AlgorithmMethod
-import javax.xml.crypto.KeySelector
-import javax.xml.crypto.KeySelectorResult
-import javax.xml.crypto.OctetStreamData
-import javax.xml.crypto.URIDereferencer
-import javax.xml.crypto.XMLCryptoContext
-import javax.xml.crypto.dsig.XMLSignatureFactory
-import javax.xml.crypto.dsig.dom.DOMValidateContext
-import javax.xml.crypto.dsig.keyinfo.KeyInfo
-import javax.xml.crypto.dsig.keyinfo.X509Data
 import javax.xml.parsers.DocumentBuilderFactory
 
 class WgtSignerTest {
@@ -71,40 +66,36 @@ class WgtSignerTest {
         return file
     }
 
-    /** Valida com a implementação XML-DSig do JDK (independente do WgtSigner). */
+    /**
+     * Valida com o Apache Santuario (a biblioteca XML-DSig que o Tizen CLI usa), independente do
+     * WgtSigner: assinatura RSA do SignedInfo, cada digest e o certificado do KeyInfo.
+     */
     private fun validate(xml: ByteArray, zip: ZipFile, expectedLeaf: X509Certificate): List<String> {
+        Init.init()
         val doc = DocumentBuilderFactory.newInstance().apply { isNamespaceAware = true }
             .newDocumentBuilder().parse(ByteArrayInputStream(xml))
         val objects = doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "Object")
         (objects.item(0) as Element).setIdAttributeNS(null, "Id", true)
-        val factory = XMLSignatureFactory.getInstance("DOM")
-        val signatureElement = doc.documentElement
-        val keySelector = object : KeySelector() {
-            override fun select(keyInfo: KeyInfo, purpose: Purpose, method: AlgorithmMethod, context: XMLCryptoContext): KeySelectorResult {
-                val data = keyInfo.content.filterIsInstance<X509Data>().first()
-                val leaf = data.content.filterIsInstance<X509Certificate>().first()
-                assertEquals(expectedLeaf, leaf)
-                return KeySelectorResult { leaf.publicKey as Key }
+        val signature = XMLSignature(doc.documentElement, "", false)
+        signature.addResourceResolver(object : ResourceResolverSpi() {
+            override fun engineCanResolveURI(context: ResourceResolverContext): Boolean =
+                context.uriToResolve?.startsWith("#") == false
+
+            override fun engineResolveURI(context: ResourceResolverContext): XMLSignatureInput {
+                val entry = zip.getEntry(URLDecoder.decode(context.uriToResolve, "UTF-8"))
+                return XMLSignatureInput(zip.getInputStream(entry).use { it.readBytes() })
             }
+        })
+        assertEquals(expectedLeaf, signature.keyInfo.x509Certificate)
+        assertTrue("assinatura ou digest inválido", signature.checkSignatureValue(expectedLeaf))
+        val signedInfo = signature.signedInfo
+        return (0 until signedInfo.length).map { i ->
+            assertTrue("digest de ${signedInfo.item(i).uri}", signedInfo.getVerificationResult(i))
+            signedInfo.item(i).uri
         }
-        val context = DOMValidateContext(keySelector, signatureElement).apply {
-            setProperty("org.jcp.xml.dsig.secureValidation", false)
-            val default = factory.uriDereferencer
-            uriDereferencer = URIDereferencer { reference, ctx ->
-                val uri = reference.uri
-                if (uri.startsWith("#")) default.dereference(reference, ctx)
-                else OctetStreamData(zip.getInputStream(zip.getEntry(java.net.URLDecoder.decode(uri, "UTF-8"))))
-            }
-        }
-        val signature = factory.unmarshalXMLSignature(context)
-        assertTrue("SignatureValue inválido", signature.signatureValue.validate(context))
-        val uris = signature.signedInfo.references.map { (it as javax.xml.crypto.dsig.Reference).let { ref ->
-            assertTrue("digest de ${ref.uri}", ref.validate(context)); ref.uri } }
-        assertTrue(signature.validate(context))
-        return uris
     }
 
-    @Test fun `both signatures validate with the JDK XML-DSig engine`() {
+    @Test fun `both signatures validate with Apache Santuario`() {
         val author = identity("author")
         val distributor = identity("distributor")
         val out = tmp.newFile("out.wgt")

@@ -70,4 +70,6 @@ dependencies {
     testImplementation(libs.org.json)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.okhttp.mockwebserver)
+    // Verificador XML-DSig independente nos testes: é a mesma biblioteca que o Tizen CLI usa para assinar.
+    testImplementation(libs.santuario.xmlsec)
 }
