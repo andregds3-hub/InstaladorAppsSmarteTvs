@@ -1,0 +1,23 @@
+# Painel do Instalador TV numa VPS, direto numa porta (padrão 92), sem domínio.
+# Modo HTTP para teste: sem domínio não há certificado HTTPS. Para produção use o
+# docker-compose.yml da raiz (Caddy + domínio + HTTPS automático).
+# Uso: deploy/vps/install.sh (gera o .env com senhas aleatórias e sobe o contêiner).
+services:
+  panel:
+    build: ../../panel
+    container_name: instaladortv-panel
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PANEL_REQUIRE_HTTPS: "false"
+      PANEL_COOKIE_SECURE: "false"
+    # Exposto direto (sem proxy na frente): não aceita cabeçalhos X-Forwarded-*, que poderiam
+    # ser forjados para fugir do rate limit.
+    command: ["uvicorn", "app.asgi:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+    ports:
+      - "${PANEL_PORT:-92}:8000"
+    volumes:
+      - panel-data:/data
+
+volumes:
+  panel-data:

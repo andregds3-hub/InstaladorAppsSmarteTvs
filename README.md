@@ -76,6 +76,20 @@ docker compose exec panel python -m app.cli create-admin admin   # ou use PANEL_
 
 Arquivos enviados e o banco ficam no volume `panel-data` (`/data`). Faça backup dele.
 
+### VPS sem domínio (teste, porta 92)
+
+Na VPS (Ubuntu), como root:
+
+```
+curl -fsSL https://raw.githubusercontent.com/andregds3-hub/InstaladorAppsSmarteTvs/main/deploy/vps/install.sh -o install.sh
+sudo bash install.sh            # ou: sudo PORT=9092 bash install.sh
+```
+
+Instala o Docker se faltar, confere se a porta está livre, sobe o contêiner `instaladortv-panel` e
+mostra uma vez a senha do admin e a chave do app (geradas na VPS, em `/opt/instaladortv/deploy/vps/.env`).
+Rodar de novo atualiza o código e mantém as senhas. **Modo HTTP, só para teste**: o APK de debug aceita
+HTTP; o de release exige HTTPS (use o `docker-compose.yml` da raiz com um domínio).
+
 ### Desenvolvimento local
 
 ```

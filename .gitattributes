@@ -4,3 +4,5 @@
 *.pem binary
 *.wgt binary
 *.p12 binary
+# Scripts que rodam na VPS (Linux) sempre com LF.
+*.sh text eol=lf
