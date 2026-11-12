@@ -2,7 +2,12 @@ package br.com.instaladortv.discovery
 
 import org.json.JSONObject
 
-enum class Platform(val label: String) { TIZEN("Samsung Tizen"), ANDROID_TV("Android TV"), WEBOS("LG webOS") }
+/** [apiName] é o valor que o painel usa (`tizen`, `android_tv`, `webos`). */
+enum class Platform(val label: String, val apiName: String) {
+    TIZEN("Samsung Tizen", "tizen"),
+    ANDROID_TV("Android TV", "android_tv"),
+    WEBOS("LG webOS", "webos"),
+}
 
 data class TvInfo(
     val ip: String,

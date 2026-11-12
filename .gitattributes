@@ -1,0 +1,6 @@
+# Certificados e pacotes vão byte a byte (sem conversão de fim de linha).
+*.cer binary
+*.crt binary
+*.pem binary
+*.wgt binary
+*.p12 binary
