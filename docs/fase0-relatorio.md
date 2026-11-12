@@ -1,8 +1,26 @@
 # Fase 0 — roteiro de teste e relatório
 
-> **Status (2026-11-11): CONCLUÍDA COM SUCESSO na ferramenta Python (PC).** Certificados gerados com a
-> conta Samsung fora do Tizen Studio, pacote assinado pelo `signer.py`, enviado e instalado por SDB próprio
-> e aberto na TV, sem o Tizen Studio. Falta repetir pelo app Android (etapa D) e numa segunda TV.
+> **Status (2026-11-12): CONCLUÍDA COM SUCESSO, no PC e no celular.** Certificados gerados com a conta
+> Samsung fora do Tizen Studio, pacote assinado pelo `signer.py`, enviado, instalado e aberto na TV por
+> SDB próprio, sem o Tizen Studio — também pelo app Android (etapa D). Falta só uma segunda TV (mais nova).
+
+## Etapa D — app Android (2026-11-12)
+
+Celular Samsung SM-S721B, Android 17, APK de debug compilado no GitHub Actions (21 testes JVM ok).
+Fluxo no app: busca da /24 encontrou a TV → "Testar conexão SDB" (banner, capability, `0 getduid`) →
+`.wgt` assinado + `device-profile.xml` escolhidos no celular → Permit → push para `/opt/usr/apps/tmp/` →
+`install completed` → `0 execute` recusado → `0 was_execute` → `launched`.
+
+Aprendizados para a interface final:
+
+- Com o IP de desenvolvedor da TV apontando para outro aparelho, a TV derruba a conexão ("TV fechou a
+  conexão" / "Connection reset"). O app deve comparar `developerIP` do `/api/v2/` com o IP do celular e
+  mostrar "esta TV está liberada para X; troque para Y e reinicie a TV" **antes** de tentar o SDB.
+- O campo livre "IP da TV" confundiu (foi digitado o IP do PC). Na interface final, a TV vem da busca;
+  IP manual só como opção avançada.
+- Escolher arquivos no celular é trabalhoso: na versão final o `.wgt` vem do painel e o perfil
+  (certificados + `device-profile.xml`) é gerado/guardado pelo próprio app.
+- O DUID exibido deve ser o do SDB (`0 getduid`), não o `uuid:` do `/api/v2/`.
 
 ## Resultado
 
@@ -28,8 +46,8 @@ python -m tizen_poc sign teste-a.wgt teste-a-assinado.wgt --profile ..\..\perfil
 python -m tizen_poc install <IP-da-TV> teste-a-assinado.wgt --permit ..\..\perfil-teste\device-profile.xml
 ```
 
-Pendências: etapa D (app Android), segunda TV (de preferência Tizen 4+), limite de DUIDs por
-certificado, comportamento após trocar o IP do celular, `.p12` compatível com o Tizen Studio (Java).
+Pendências: segunda TV (de preferência Tizen 4+), limite de DUIDs por certificado, `.p12` compatível
+com o Tizen Studio (Java).
 
 ## Preparação
 
