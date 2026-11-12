@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}TVs{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">TVs que passaram pelo instalador</h1>
+<div class="table-responsive">
+<table class="table table-sm table-hover align-middle">
+  <thead><tr><th>Modelo</th><th>Ano</th><th>Plataforma</th><th>DUID</th><th>Firmware / sistema</th><th>IP local</th><th>Última instalação</th><th>App / versão</th><th>Status</th><th>Visto</th></tr></thead>
+  <tbody>
+  {% for d in devices %}
+    <tr>
+      <td>{{ d.model_name or d.model or '—' }}<div class="small text-body-secondary">{{ d.name }}</div></td>
+      <td>{{ d.year or '—' }}</td>
+      <td>{{ platforms.get(d.platform, d.platform) }}</td>
+      <td class="small font-monospace text-break">{{ d.duid or '—' }}</td>
+      <td class="small">{{ d.firmware or '—' }} / {{ d.os_version or '—' }}</td>
+      <td>{{ d.local_ip or '—' }}</td>
+      <td>{{ d.last_install_at.strftime('%d/%m/%Y %H:%M') if d.last_install_at else '—' }}</td>
+      <td>{{ d.last_app.name if d.last_app else '—' }}{% if d.last_version %} {{ d.last_version.version }}{% endif %}</td>
+      <td>{% if d.last_status == 'success' %}<span class="badge text-bg-success">sucesso</span>{% elif d.last_status == 'failure' %}<span class="badge text-bg-danger">falha</span>{% else %}—{% endif %}</td>
+      <td class="small">{{ d.last_seen.strftime('%d/%m/%Y %H:%M') }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="10" class="text-body-secondary">Nenhuma TV registrada.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="small text-body-secondary">Horários em UTC.</p>
+{% endblock %}

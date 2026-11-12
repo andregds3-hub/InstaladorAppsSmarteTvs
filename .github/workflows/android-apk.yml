@@ -1,0 +1,76 @@
+# Compila o app Android (APK de debug), roda os testes JVM e publica o APK como artefato.
+# O log resumido de cada execução vai para o branch ci-logs (para ler os erros sem abrir o navegador).
+name: APK Android
+
+on:
+  push:
+    paths:
+      - "android/**"
+      - ".github/workflows/android-apk.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write # só para publicar o log no branch ci-logs
+
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # O repositório não traz o gradlew: a versão do Gradle é a mesma do gradle-wrapper.properties.
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.11.1"
+
+      - name: Compilar APK
+        id: build
+        working-directory: android
+        shell: bash
+        run: gradle --no-daemon --console=plain assembleDebug 2>&1 | tee ../build.log
+
+      - name: Testes unitários
+        id: test
+        if: steps.build.outcome == 'success'
+        working-directory: android
+        shell: bash
+        run: gradle --no-daemon --console=plain testDebugUnitTest 2>&1 | tee ../test.log
+
+      - name: Publicar APK
+        if: always() && steps.build.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: instaladortv-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      - name: Publicar log no branch ci-logs
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p /tmp/ci
+          touch build.log test.log
+          cp build.log test.log /tmp/ci/
+          cp -r android/app/build/test-results /tmp/ci/test-results 2>/dev/null || true
+          {
+            echo "commit: ${{ github.sha }}"
+            echo "build: ${{ steps.build.outcome }}  testes: ${{ steps.test.outcome }}"
+            echo
+            grep -hE '^e: |^w: |error:|FAILED|What went wrong|Caused by|AssertionError|Exception' build.log test.log | head -n 200 || true
+          } > /tmp/ci/resumo.txt
+          cd /tmp/ci
+          git init -q -b ci-logs
+          git config user.name "ci"
+          git config user.email "ci@users.noreply.github.com"
+          git add -A
+          git commit -qm "CI ${{ github.sha }}: build ${{ steps.build.outcome }}, testes ${{ steps.test.outcome }}"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-logs

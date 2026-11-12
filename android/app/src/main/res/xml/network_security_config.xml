@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A TV Samsung só responde em HTTP puro (porta 8001) e o IP dela é qualquer um da rede
+  local, então não dá para limitar por domínio. O painel/API é acessado só por HTTPS:
+  o cliente da API recusa URLs http:// no código.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Clientes{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Clientes do instalador</h1>
+{% if not enabled %}
+<div class="alert alert-secondary">O código de acesso está <strong>desligado</strong>: qualquer cópia do app lista os apps. Ligue em <a href="/admin/settings">Configurações</a>.</div>
+{% endif %}
+{% if new_code %}
+<div class="alert alert-warning">
+  Código de <strong>{{ new_code.name }}</strong>: <code class="fs-5">{{ new_code.code }}</code><br>
+  Anote agora: ele não é mostrado de novo (só o hash fica salvo).
+</div>
+{% endif %}
+<form method="post" action="/admin/clients" class="row g-2 mb-4">
+  <input type="hidden" name="csrf" value="{{ csrf_token(request) }}">
+  <div class="col-md-4"><input name="name" class="form-control" placeholder="Nome do cliente" required maxlength="120"></div>
+  <div class="col-md-6"><input name="notes" class="form-control" placeholder="Observações"></div>
+  <div class="col-md-2"><button class="btn btn-primary w-100">Gerar código</button></div>
+</form>
+<table class="table table-sm align-middle">
+  <thead><tr><th>Nome</th><th>Código</th><th>Status</th><th>Criado</th><th>Visto</th><th></th></tr></thead>
+  <tbody>
+  {% for c in clients %}
+    <tr>
+      <td>{{ c.name }}<div class="small text-body-secondary">{{ c.notes }}</div></td>
+      <td class="font-monospace">…{{ c.code_hint }}</td>
+      <td>{% if c.blocked %}<span class="badge text-bg-danger">bloqueado</span>{% else %}<span class="badge text-bg-success">liberado</span>{% endif %}</td>
+      <td class="small">{{ c.created_at.strftime('%d/%m/%Y') }}</td>
+      <td class="small">{{ c.last_seen.strftime('%d/%m/%Y %H:%M') if c.last_seen else '—' }}</td>
+      <td class="text-end">
+        {% for action, label, style in [('unblock' if c.blocked else 'block', 'Desbloquear' if c.blocked else 'Bloquear', 'warning'), ('regenerate', 'Novo código', 'secondary'), ('delete', 'Excluir', 'danger')] %}
+        <form method="post" action="/admin/clients/{{ c.id }}/{{ action }}" class="d-inline" {% if action == 'delete' %}onsubmit="return confirm('Excluir o cliente?')"{% endif %}>
+          <input type="hidden" name="csrf" value="{{ csrf_token(request) }}">
+          <button class="btn btn-sm btn-outline-{{ style }}">{{ label }}</button>
+        </form>
+        {% endfor %}
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6" class="text-body-secondary">Nenhum cliente.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

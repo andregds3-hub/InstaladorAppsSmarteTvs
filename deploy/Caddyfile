@@ -1,0 +1,7 @@
+{$PANEL_DOMAIN} {
+	encode gzip
+	request_body {
+		max_size 250MB
+	}
+	reverse_proxy panel:8000
+}

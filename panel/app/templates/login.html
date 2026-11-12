@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Entrar{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-sm-8 col-md-5 col-lg-4">
+    <h1 class="h4 mb-3">Painel do instalador</h1>
+    <form method="post" action="/admin/login" class="card card-body">
+      <input type="hidden" name="csrf" value="{{ csrf_token(request) }}">
+      <label class="form-label">Usuário
+        <input name="username" class="form-control" autocomplete="username" required autofocus>
+      </label>
+      <label class="form-label">Senha
+        <input name="password" type="password" class="form-control" autocomplete="current-password" required>
+      </label>
+      <button class="btn btn-primary mt-2">Entrar</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Instalações{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 m-0">Logs de instalação</h1>
+  <div class="btn-group">
+    <a href="/admin/installs" class="btn btn-sm btn-outline-secondary {% if not status %}active{% endif %}">Todas</a>
+    <a href="/admin/installs?status=success" class="btn btn-sm btn-outline-success {% if status == 'success' %}active{% endif %}">Sucesso ({{ totals.get('success', 0) }})</a>
+    <a href="/admin/installs?status=failure" class="btn btn-sm btn-outline-danger {% if status == 'failure' %}active{% endif %}">Falha ({{ totals.get('failure', 0) }})</a>
+  </div>
+</div>
+<div class="table-responsive">
+<table class="table table-sm align-middle">
+  <thead><tr><th>Quando (UTC)</th><th>Status</th><th>App / versão</th><th>TV</th><th>Etapa</th><th>Código</th><th>Mensagem da TV</th></tr></thead>
+  <tbody>
+  {% for log in logs %}
+    <tr>
+      <td class="small">{{ log.created_at.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+      <td>{% if log.status == 'success' %}<span class="badge text-bg-success">sucesso</span>{% else %}<span class="badge text-bg-danger">falha</span>{% endif %}</td>
+      <td>{{ log.app.name if log.app else '—' }} {{ log.version.version if log.version else '' }}</td>
+      <td class="small">{% if log.device %}{{ log.device.model_name or log.device.model }} · {{ log.device.local_ip }}{% else %}—{% endif %}</td>
+      <td class="small">{{ log.stage or '—' }}</td>
+      <td class="small font-monospace">{{ log.error_code or '—' }}</td>
+      <td class="small" style="white-space: pre-line; max-width: 32rem">{{ log.message }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="7" class="text-body-secondary">Nenhum registro.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Segredos e dados locais
+.env
+data/
+*.p12
+*.pem
+perfil*/
+*.wgt
+captura*.log
+poc/teste-*/
+
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+*.apk
+*.keystore
+*.jks
+
+# Ferramentas locais
+.claudetools/

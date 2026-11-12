@@ -1,0 +1,44 @@
+# Painel + API na VPS. HTTPS automático pelo Caddy (Let's Encrypt) para PANEL_DOMAIN.
+# Uso: crie o .env (variáveis no README) e rode: docker compose up -d --build
+services:
+  panel:
+    build: ./panel
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - panel-data:/data
+    expose:
+      - "8000"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      PANEL_DOMAIN: ${PANEL_DOMAIN:?defina PANEL_DOMAIN no .env}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - panel
+
+  # Para PostgreSQL: descomente, e no .env use
+  # PANEL_DATABASE_URL=postgresql+psycopg://panel:<senha>@db:5432/panel
+  # db:
+  #   image: postgres:16
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: panel
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD}
+  #     POSTGRES_DB: panel
+  #   volumes:
+  #     - db-data:/var/lib/postgresql/data
+
+volumes:
+  panel-data:
+  caddy-data:
+  caddy-config:
+  # db-data:

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Apps{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 m-0">Apps</h1>
+  <a href="/admin/apps/new" class="btn btn-primary">Novo app</a>
+</div>
+<table class="table table-hover align-middle">
+  <thead><tr><th></th><th>Nome</th><th>Plataforma</th><th>Versão atual</th><th>Versões</th><th>Ordem</th><th>Status</th></tr></thead>
+  <tbody>
+  {% for app in apps %}
+    <tr>
+      <td style="width:48px">{% if app.icon_file %}<img src="{{ url_for('icons', path=app.icon_file) }}" alt="" width="40" height="40" class="rounded">{% endif %}</td>
+      <td><a href="/admin/apps/{{ app.id }}">{{ app.name }}</a></td>
+      <td>{{ platforms[app.platform] }}</td>
+      <td>{{ app.current_version.version if app.current_version else '—' }}</td>
+      <td>{{ app.versions|length }}</td>
+      <td>{{ app.display_order }}</td>
+      <td>{% if app.active %}<span class="badge text-bg-success">ativo</span>{% else %}<span class="badge text-bg-secondary">inativo</span>{% endif %}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="7" class="text-body-secondary">Nenhum app ainda.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

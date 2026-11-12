@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}{{ app.name }}{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">{{ app.name }} <small class="text-body-secondary fs-6">{{ platforms[app.platform] }}</small></h1>
+
+<form method="post" action="/admin/apps/{{ app.id }}" enctype="multipart/form-data" class="card card-body mb-4">
+  {% include "_app_fields.html" %}
+  <div class="mt-3"><button class="btn btn-primary">Salvar</button></div>
+</form>
+
+<h2 class="h5">Enviar versão</h2>
+<form method="post" action="/admin/apps/{{ app.id }}/versions" enctype="multipart/form-data" class="card card-body mb-4">
+  <input type="hidden" name="csrf" value="{{ csrf_token(request) }}">
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Arquivo ({{ {'tizen': '.wgt', 'android_tv': '.apk', 'webos': '.ipk'}[app.platform] }}, até {{ max_upload_mb }} MB)
+        <input name="package" type="file" class="form-control" required>
+      </label>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Versão<input name="version" class="form-control" maxlength="40" placeholder="{{ 'do config.xml' if app.platform == 'tizen' else '1.0.0' }}"></label>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Data<input name="released_at" type="date" class="form-control"></label>
+    </div>
+    <div class="col-12">
+      <label class="form-label w-100">Changelog<textarea name="changelog" class="form-control" rows="2"></textarea></label>
+    </div>
+    <div class="col-12 form-check ms-2">
+      <input class="form-check-input" type="checkbox" name="make_current" value="true" id="make_current" checked>
+      <label class="form-check-label" for="make_current">Tornar a versão atual</label>
+    </div>
+  </div>
+  <div class="mt-3"><button class="btn btn-primary">Enviar</button></div>
+</form>
+
+<h2 class="h5">Versões</h2>
+{% for v in app.versions %}
+<div class="card mb-3 {% if v.is_current %}border-success{% endif %}">
+  <div class="card-body">
+    <div class="d-flex justify-content-between flex-wrap gap-2">
+      <div>
+        <strong>{{ v.version }}</strong>
+        {% if v.is_current %}<span class="badge text-bg-success">atual</span>{% endif %}
+        <span class="text-body-secondary">· {{ v.released_at.strftime('%d/%m/%Y') }} · {{ (v.size / 1048576)|round(2) }} MB · {{ v.file_name }}</span>
+        <div class="small font-monospace text-break">SHA-256 {{ v.sha256 }}</div>
+        {% if v.package_id %}<div class="small">Pacote <code>{{ v.package_id }}</code> · App <code>{{ v.package_app_id }}</code> · Tizen exigido {{ v.required_version or '—' }}</div>{% endif %}
+        {% if v.changelog %}<div class="small mt-1" style="white-space: pre-line">{{ v.changelog }}</div>{% endif %}
+      </div>
+      <div class="d-flex gap-2 align-items-start">
+        {% if not v.is_current %}
+        <form method="post" action="/admin/versions/{{ v.id }}/current"><input type="hidden" name="csrf" value="{{ csrf_token(request) }}"><button class="btn btn-sm btn-outline-success">Tornar atual</button></form>
+        <form method="post" action="/admin/versions/{{ v.id }}/delete" onsubmit="return confirm('Excluir esta versão e o arquivo?')"><input type="hidden" name="csrf" value="{{ csrf_token(request) }}"><button class="btn btn-sm btn-outline-danger">Excluir</button></form>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <div class="small text-body-secondary mb-1">Compatibilidade {% if not v.compatibility %}(sem regras: todas as TVs da plataforma){% endif %}</div>
+      {% for rule in v.compatibility %}
+      <form method="post" action="/admin/compat/{{ rule.id }}/delete" class="d-inline">
+        <input type="hidden" name="csrf" value="{{ csrf_token(request) }}">
+        <span class="badge text-bg-info">{{ describe(rule) }}{% if rule.note %} — {{ rule.note }}{% endif %}</span>
+        <button class="btn btn-sm btn-link text-danger p-0 me-2" title="Remover">×</button>
+      </form>
+      {% endfor %}
+      <form method="post" action="/admin/versions/{{ v.id }}/compat" class="row g-2 mt-1">
+        <input type="hidden" name="csrf" value="{{ csrf_token(request) }}">
+        <div class="col-6 col-md-2"><input name="min_year" type="number" class="form-control form-control-sm" placeholder="Ano mín. (2016)"></div>
+        <div class="col-6 col-md-2"><input name="max_year" type="number" class="form-control form-control-sm" placeholder="Ano máx."></div>
+        <div class="col-6 col-md-2"><input name="min_os" class="form-control form-control-sm" placeholder="{{ 'Tizen mín. (2.4)' if app.platform == 'tizen' else 'Sistema mín.' }}"></div>
+        <div class="col-6 col-md-2"><input name="max_os" class="form-control form-control-sm" placeholder="{{ 'Tizen máx.' if app.platform == 'tizen' else 'Sistema máx.' }}"></div>
+        <div class="col-8 col-md-3"><input name="note" class="form-control form-control-sm" placeholder="Observação"></div>
+        <div class="col-4 col-md-1"><button class="btn btn-sm btn-outline-primary w-100">Adicionar</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+{% else %}
+<p class="text-body-secondary">Nenhuma versão enviada.</p>
+{% endfor %}
+
+<form method="post" action="/admin/apps/{{ app.id }}/delete" class="mt-4" onsubmit="return confirm('Excluir o app, todas as versões e arquivos?')">
+  <input type="hidden" name="csrf" value="{{ csrf_token(request) }}">
+  <button class="btn btn-outline-danger">Excluir app</button>
+</form>
+{% endblock %}

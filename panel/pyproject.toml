@@ -1,0 +1,9 @@
+[project]
+name = "instalador-panel"
+version = "0.1.0"
+description = "Painel admin e API do instalador de apps para Smart TV"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
