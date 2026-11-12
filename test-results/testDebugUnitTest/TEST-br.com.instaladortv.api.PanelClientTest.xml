@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="br.com.instaladortv.api.PanelClientTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-12T15:54:53" hostname="runnervmwuk1x" time="0.502">
+  <properties/>
+  <testcase name="https is required unless allowed" classname="br.com.instaladortv.api.PanelClientTest" time="0.159"/>
+  <testcase name="download verifies sha256" classname="br.com.instaladortv.api.PanelClientTest" time="0.12"/>
+  <testcase name="access code required is detected" classname="br.com.instaladortv.api.PanelClientTest" time="0.003"/>
+  <testcase name="auth then list apps with filters" classname="br.com.instaladortv.api.PanelClientTest" time="0.048"/>
+  <testcase name="download from another host is refused" classname="br.com.instaladortv.api.PanelClientTest" time="0.001"/>
+  <testcase name="expired token is renewed once" classname="br.com.instaladortv.api.PanelClientTest" time="0.168"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="br.com.instaladortv.cert.ProfileManagerTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-12T15:54:53" hostname="runnervmwuk1x" time="3.028">
+  <properties/>
+  <testcase name="missing CA gives a clear error" classname="br.com.instaladortv.cert.ProfileManagerTest" time="0.815"/>
+  <testcase name="first tv logs in and issues both certificates with the CA chain" classname="br.com.instaladortv.cert.ProfileManagerTest" time="0.24"/>
+  <testcase name="another samsung account is refused" classname="br.com.instaladortv.cert.ProfileManagerTest" time="0.194"/>
+  <testcase name="new tv keeps the author and adds the duid to the distributor" classname="br.com.instaladortv.cert.ProfileManagerTest" time="0.307"/>
+  <testcase name="expired profile is renewed" classname="br.com.instaladortv.cert.ProfileManagerTest" time="0.384"/>
+  <testcase name="same tv again needs no login" classname="br.com.instaladortv.cert.ProfileManagerTest" time="0.364"/>
+  <testcase name="cert parser accepts pem der base64 and json" classname="br.com.instaladortv.cert.ProfileManagerTest" time="0.201"/>
+  <testcase name="csr carries email and duids" classname="br.com.instaladortv.cert.ProfileManagerTest" time="0.3"/>
+  <testcase name="forget removes everything" classname="br.com.instaladortv.cert.ProfileManagerTest" time="0.222"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

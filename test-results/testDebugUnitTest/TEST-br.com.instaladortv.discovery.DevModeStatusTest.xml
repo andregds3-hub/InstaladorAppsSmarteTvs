@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="br.com.instaladortv.discovery.DevModeStatusTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-12T15:54:56" hostname="runnervmwuk1x" time="0.001">
+  <properties/>
+  <testcase name="off" classname="br.com.instaladortv.discovery.DevModeStatusTest" time="0.001"/>
+  <testcase name="ready" classname="br.com.instaladortv.discovery.DevModeStatusTest" time="0.0"/>
+  <testcase name="no api info but sdb open" classname="br.com.instaladortv.discovery.DevModeStatusTest" time="0.0"/>
+  <testcase name="released to another device" classname="br.com.instaladortv.discovery.DevModeStatusTest" time="0.0"/>
+  <testcase name="right ip but sdb closed needs restart" classname="br.com.instaladortv.discovery.DevModeStatusTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

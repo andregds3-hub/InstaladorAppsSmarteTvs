@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="br.com.instaladortv.sdb.SdbClientTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-12T15:54:56" hostname="runnervmwuk1x" time="0.191">
+  <properties/>
+  <testcase name="push failure message surfaces" classname="br.com.instaladortv.sdb.SdbClientTest" time="0.048"/>
+  <testcase name="bad magic rejected" classname="br.com.instaladortv.sdb.SdbClientTest" time="0.001"/>
+  <testcase name="handshake capability and shell" classname="br.com.instaladortv.sdb.SdbClientTest" time="0.083"/>
+  <testcase name="push respects device maxdata" classname="br.com.instaladortv.sdb.SdbClientTest" time="0.058"/>
+  <testcase name="banner and capability parsing" classname="br.com.instaladortv.sdb.SdbClientTest" time="0.001"/>
+  <testcase name="header layout matches ADB" classname="br.com.instaladortv.sdb.SdbClientTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

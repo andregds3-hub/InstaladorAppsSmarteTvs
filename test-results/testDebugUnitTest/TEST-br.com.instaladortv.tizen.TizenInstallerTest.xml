@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="br.com.instaladortv.tizen.TizenInstallerTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-12T15:54:56" hostname="runnervmwuk1x" time="0.963">
+  <properties/>
+  <testcase name="hash mismatch and unsigned package never connect" classname="br.com.instaladortv.tizen.TizenInstallerTest" time="0.056"/>
+  <testcase name="unreachable tv explains developer mode" classname="br.com.instaladortv.tizen.TizenInstallerTest" time="0.029"/>
+  <testcase name="refused execute falls back to was_execute" classname="br.com.instaladortv.tizen.TizenInstallerTest" time="0.193"/>
+  <testcase name="falls back to was_execute" classname="br.com.instaladortv.tizen.TizenInstallerTest" time="0.211"/>
+  <testcase name="full flow pushes installs and launches" classname="br.com.instaladortv.tizen.TizenInstallerTest" time="0.172"/>
+  <testcase name="certificate rejection stops before launch" classname="br.com.instaladortv.tizen.TizenInstallerTest" time="0.129"/>
+  <testcase name="permit pushes device profile before the package" classname="br.com.instaladortv.tizen.TizenInstallerTest" time="0.17"/>
+  <testcase name="ids that could inject shell are rejected" classname="br.com.instaladortv.tizen.TizenInstallerTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

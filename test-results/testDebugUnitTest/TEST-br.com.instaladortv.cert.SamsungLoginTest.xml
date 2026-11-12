@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="br.com.instaladortv.cert.SamsungLoginTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-12T15:54:56" hostname="runnervmwuk1x" time="0.014">
+  <properties/>
+  <testcase name="authorize url" classname="br.com.instaladortv.cert.SamsungLoginTest" time="0.003"/>
+  <testcase name="rejects wrong state and missing email" classname="br.com.instaladortv.cert.SamsungLoginTest" time="0.001"/>
+  <testcase name="callback server receives the browser post" classname="br.com.instaladortv.cert.SamsungLoginTest" time="0.009"/>
+  <testcase name="parse callback" classname="br.com.instaladortv.cert.SamsungLoginTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
